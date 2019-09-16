@@ -1,0 +1,50 @@
+{
+    "variables": {
+      "user": "admindebian",
+      "password": "admindebian",
+      "disk_size": "5000",
+      "domain": ""
+    },
+    "builders":
+    [
+      {        
+        "iso_url": "http://debian.c3sl.ufpr.br/debian-cd/10.1.0/amd64/iso-cd/debian-10.1.0-amd64-netinst.iso",
+        "iso_checksum": "7915fdb77a0c2623b4481fc5f0a8052330defe1cde1e0834ff233818dc6f301e",
+        "iso_checksum_type": "sha256",
+        
+        "output_directory": "output_debian",
+        "shutdown_command": "echo '{{ user `password` }}' | sudo -S shutdown -P now",
+        
+        "disk_size": "{{ user `disk_size` }}",
+        "type": "qemu",
+        "format": "qcow2",
+        "accelerator": "kvm",
+        "http_directory": "http",
+        
+        "ssh_username": "{{ user `user` }}",    
+        "ssh_password": "{{ user `password` }}",
+        "ssh_timeout": "20m",
+        
+        "vm_name": "debian",
+        "boot_wait": "10s",
+        "boot_command": [
+          "<esc><wait><wait>",
+          "install ",
+
+          "auto=true ",
+          "priority=critical ",
+          "interface=auto ",
+          "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/debian.cfg ",
+
+          "passwd/user-fullname={{ user `user` }} ",
+          "passwd/user-password={{ user `password` }} ",
+          "passwd/user-password-again={{ user `password` }} ",
+          "passwd/username={{ user `user` }} ",
+
+          "<enter>",
+          "<wait><ender>"
+          
+        ]
+      }
+    ]
+  }
